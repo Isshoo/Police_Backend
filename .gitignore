@@ -1,0 +1,31 @@
+# Virtual environment
+.venv/
+.env
+
+# Bytecode files
+__pycache__/
+cache
+
+
+src/storage/datasets/base/*
+src/storage/datasets/uploads/*
+src/storage/datasets/preprocessed/*
+src/storage/datasets/processed/*
+src/storage/datasets/classifications/*
+src/storage/metadatas/**
+src/storage/models/trained/*
+
+
+
+# Model
+*.pkl
+*.joblib
+
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.vscode/
+*.DS_Store
