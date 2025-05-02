@@ -36,6 +36,7 @@ class DatasetPreprocessor(Preprocessor):
             self.text_preprocessor.preprocess)
 
         df.drop_duplicates(subset=["preprocessedKomentar"], inplace=True)
+        df.dropna(subset=["preprocessedKomentar"], inplace=True)
 
         return df
 
@@ -47,6 +48,7 @@ class DatasetPreprocessor(Preprocessor):
         df['komentar'] = df['komentar'].str.replace('"', "'")
 
         df.drop_duplicates(subset=["komentar"], inplace=True)
+        df.dropna(subset=["komentar"], inplace=True)
 
         # Simpan sebagai CSV dengan format yang benar
         df.to_csv("./src/storage/datasets/base/datasetML.csv",

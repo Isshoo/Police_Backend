@@ -92,13 +92,13 @@ class KNNModelTrainer:
         # Default grid search parameters
         if param_grid is None:
             param_grid = {
-                "n_neighbors": [5, 7, 9, 11],  # Coba beberapa nilai KNN
+                "n_neighbors": [3, 5, 7, 9, 11],  # Coba beberapa nilai KNN
                 # Coba beberapa split train-test
-                "test_size": [0.2, 0.25],
+                "test_size": [0.2, 0.25, 0.3, 0.4],
                 # Coba berbagai random state
                 "random_state": [42, 100],
                 # Coba beberapa nilai maksimum fitur
-                "max_features": [5000, 6000, None]
+                "max_features": [None]
             }
 
         best_score = 0
@@ -177,7 +177,7 @@ class KNNModelTrainer:
 
 
 if __name__ == "__main__":
-    dataset_path = "./src/storage/datasets/preprocessed/datasetml_original_preprocessed.csv"
+    dataset_path = "./src/storage/datasets/preprocessed/datasetml2_original_preprocessed.csv"
     trainer = KNNModelTrainer(dataset_path)
 
     # # Training model secara manual
