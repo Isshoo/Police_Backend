@@ -31,7 +31,7 @@ class TweetClassifier:
             hasil_model_knn = "Unknown"
 
         return {
-            "Preprocessed_Text": processed_sample_text,
+            "preprocessedKomentar": processed_sample_text,
             "KNN": hasil_model_knn,
         }
 
@@ -53,22 +53,18 @@ class TweetClassifier:
             knn_results = []
 
             # Looping per baris untuk klasifikasi
-            for text in df["contentSnippet"]:
+            for text in df["komentar"]:
                 result = self.classify(text)
-                preprocessed_texts.append(result["Preprocessed_Text"])
+                preprocessed_texts.append(result["preprocessedKomentar"])
                 knn_results.append(result["KNN"])
 
             # Tambahkan hasil ke dataframe
-            df["Preprocessed_Text"] = preprocessed_texts
+            df["preprocessedKomentar"] = preprocessed_texts
             df["KNN"] = knn_results
+
+            # tfidf_stats = knn_model.get_tfidf_word_stats(X_train)
 
             return df.to_dict(orient="records")
 
-        except pd.errors.EmptyDataError:
-            return {"error": "File CSV kosong."}
-        except pd.errors.ParserError as e:
-            return {"error": f"Kesalahan parsing CSV: {str(e)}"}
-        except UnicodeDecodeError:
-            return {"error": "Encoding tidak valid. Coba simpan file sebagai UTF-8."}
         except Exception as e:
             return {"error": f"Kesalahan internal: {str(e)}"}

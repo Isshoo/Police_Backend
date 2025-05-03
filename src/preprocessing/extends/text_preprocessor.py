@@ -123,7 +123,7 @@ class TextPreprocessor(Preprocessor):
         #     text) if len(t) > 1]
         # Menghapus Stopwords lagi
         tokens = [t for t in nltk.word_tokenize(
-            text) if t not in self.stop_words if len(t) > 1]
+            text) if len(t) > 1]
         text = " ".join(tokens)
 
         if text == '':

@@ -21,7 +21,7 @@ class KNNModelTrainer:
     def train(self, n_neighbors=11, test_size=0.25, max_features=None):
         """Melatih model Hybrid C5.0-KNN"""
 
-        X_texts = self.df["komentar"].values
+        X_texts = self.df["preprocessedKomentar"].values
         y = self.df["label"].values
 
         le = LabelEncoder()
@@ -83,7 +83,7 @@ class KNNModelTrainer:
     def train_with_gridsearch(self, param_grid=None):
         """Melatih model Hybrid C5.0-KNN dengan Grid Search untuk mencari parameter terbaik"""
 
-        X_texts = self.df["komentar"].values
+        X_texts = self.df["preprocessedKomentar"].values
         y = self.df["label"].values
 
         le = LabelEncoder()
