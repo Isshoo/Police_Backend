@@ -28,7 +28,7 @@ class KNNModelTrainer:
         y_encoded = le.fit_transform(y)
 
         X_train, X_test, y_train, y_test, raw_train, raw_test = train_test_split(
-            X_texts, y_encoded, X_texts, test_size=test_size, stratify=y_encoded, random_state=100
+            X_texts, y_encoded, X_texts, test_size=test_size, stratify=y_encoded, random_state=42
         )
 
         knn_model = KNNClassifier(

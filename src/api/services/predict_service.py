@@ -2,6 +2,7 @@ from src.features.classifier import TweetClassifier
 
 
 class PredictService:
+    PREDICT_DIR = "src/storage/datasets/classifications"
 
     def predict(self, text, model_path='./src/storage/models/base/knn_model.joblib'):
         """ Mengklasifikasikan teks berita menggunakan model hybrid dan DeepSeek """

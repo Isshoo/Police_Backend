@@ -156,7 +156,7 @@ class PreprocessService:
         if index >= len(df):
             return {"message": "Data not found", "error": True}, 404
 
-        df.at[index, "topik"] = new_label
+        df.at[index, "label"] = new_label
 
         result = self.update_preprocessed_dataset(dataset_id, df)
 
