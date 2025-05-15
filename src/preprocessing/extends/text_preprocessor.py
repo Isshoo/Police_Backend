@@ -1,9 +1,10 @@
 from src.preprocessing.preprocessor import Preprocessor
+from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
 
 from mpstemmer import MPStemmer
 
 import nltk
-from nltk.corpus import stopwords
+# from nltk.corpus import stopwords
 
 import html
 import re
@@ -34,7 +35,9 @@ for pkg in nltk_packages:
         nltk.download(pkg)
 
 # Load Stopwords satu kali
-INDONESIAN_STOPWORDS = set(stopwords.words("indonesian"))
+stopword_factory = StopWordRemoverFactory()
+INDONESIAN_STOPWORDS = set(stopword_factory.get_stop_words())
+# INDONESIAN_STOPWORDS = set(stopwords.words("indonesian"))
 
 # Inisialisasi Spacy + tokenizer khusus
 
