@@ -5,8 +5,10 @@ from src.preprocessing.extends.text_preprocessor import TextPreprocessor
 
 
 class DatasetPreprocessor(Preprocessor):
+    text_preprocessor = TextPreprocessor()
+
     def __init__(self):
-        self.text_preprocessor = TextPreprocessor()
+        pass
 
     def preprocess(self, file_path, sep=",", encoding="utf-8"):
         """ Preprocessing dataset """

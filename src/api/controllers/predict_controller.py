@@ -4,8 +4,10 @@ import os
 
 
 class PredictController:
+    predict_service = PredictService()
+
     def __init__(self):
-        self.predict_service = PredictService()
+        pass
 
     def predict(self):
         """ Menerima input teks dan mengembalikan hasil prediksi """

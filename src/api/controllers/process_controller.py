@@ -4,9 +4,11 @@ from src.api.services.preprocess_service import PreprocessService
 
 
 class ProcessController:
+    process_service = ProcessService()
+    preprocess_service = PreprocessService()
+
     def __init__(self):
-        self.process_service = ProcessService()
-        self.preprocess_service = PreprocessService()
+        pass
 
     def split_dataset(self, preprocessed_dataset_id):
         try:

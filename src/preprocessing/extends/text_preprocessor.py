@@ -1,7 +1,5 @@
 from src.preprocessing.preprocessor import Preprocessor
 
-from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
-from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 from mpstemmer import MPStemmer
 
 import nltk
@@ -12,24 +10,38 @@ import re
 import time
 import ssl
 
-try:
-    _create_unverified_https_context = ssl._create_unverified_context
-except AttributeError:
-    pass
-else:
-    ssl._create_default_https_context = _create_unverified_https_context
-
-
 import spacy
-from spacy.lang.id import Indonesian
 from spacy.tokenizer import Tokenizer
 from spacy.util import compile_prefix_regex, compile_suffix_regex, compile_infix_regex
 
 
+# ========= HANYA DIJALANKAN SEKALI SAAT AWAL =========
+
+# Perbaikan koneksi SSL untuk NLTK di lingkungan tertentu
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+    ssl._create_default_https_context = _create_unverified_https_context
+except AttributeError:
+    pass
+
+# Pastikan resource NLTK tersedia
+nltk_packages = ["punkt", "punkt_tab", "stopwords"]
+for pkg in nltk_packages:
+    try:
+        nltk.data.find(f'tokenizers/{pkg}' if pkg ==
+                       "punkt" else f'corpora/{pkg}')
+    except LookupError:
+        nltk.download(pkg)
+
+# Load Stopwords satu kali
+INDONESIAN_STOPWORDS = set(stopwords.words("indonesian"))
+
+# Inisialisasi Spacy + tokenizer khusus
+
+
 def custom_tokenizer(nlp):
-    # Hilangkan infix `(?<=[0-9])(?=[a-zA-Z])` yang menyebabkan pemisahan 5G jadi 5 dan G
     infix_re = compile_infix_regex([
-        r"[-~]",  # masih pisah kalau ada tanda ini, seperti `x7-Xtreme`
+        r"[-~]",
     ])
     return Tokenizer(
         nlp.vocab,
@@ -40,23 +52,25 @@ def custom_tokenizer(nlp):
     )
 
 
+SPACY_NLP = spacy.blank("id")
+SPACY_NLP.tokenizer = custom_tokenizer(SPACY_NLP)
+SPACY_NLP.add_pipe("lemmatizer", config={"mode": "lookup"})
+SPACY_NLP.initialize()
+
+# Stemmer MP lebih cepat
+STEMMER_MP = MPStemmer()
+
+
+# ========== KELAS PREPROCESSOR ==========
+
 class TextPreprocessor(Preprocessor):
+    nlp = SPACY_NLP
+    stemmerMP = STEMMER_MP
+    stop_words = INDONESIAN_STOPWORDS
 
     def __init__(self):
-        factory = StemmerFactory()
-        self.stemmer = factory.create_stemmer()
-        self.stemmerMP = MPStemmer()
-
-        self.nlp = spacy.blank("id")
-        self.nlp.tokenizer = custom_tokenizer(self.nlp)
-        self.nlp.add_pipe("lemmatizer", config={"mode": "lookup"})
-        self.nlp.initialize()
-
-        stopword_factory = StopWordRemoverFactory()
-        self.stopwords = set(stopword_factory.get_stop_words())
-
-        # nltk.download('punkt')
-        self.stop_words = set(stopwords.words('indonesian'))
+        # Inisialisasi satu kali
+        pass
 
     def normalize_custom_words(self, text):
         replacements = {
@@ -68,11 +82,9 @@ class TextPreprocessor(Preprocessor):
         return text
 
     def auto_protect_keywords(self, text):
-        # Ambil kata-kata gabungan angka-huruf (contoh: 5g, x7-xtreme)
         pattern = r'\b(?:[a-z]*\d+[a-z]+[a-z\d-]*)\b|\b(?:\d+[a-z]+)\b'
         keywords = re.findall(pattern, text.lower())
         protected_map = {}
-        # set() untuk hindari duplikat
         for i, keyword in enumerate(set(keywords)):
             token = f"PROTECTED{i}"
             protected_map[token] = keyword
@@ -90,70 +102,41 @@ class TextPreprocessor(Preprocessor):
 
     def preprocess(self, text):
         print(f"Text Awal: {text}")
-
-        if text == '':
+        if not text.strip():
             return None
 
-        # Case Folding: Ubah semua teks menjadi huruf kecil
         text = text.lower()
-
-        # Menghapus karakter non-UTF-8
         text = text.encode('utf-8', 'ignore').decode('utf-8')
-        # Menghapus karakter HTML entities seperti amp;nbsp;
         text = html.unescape(text)
-        # Ganti satuan uang seperti 'rp16.595' menjadi 'rupiah'
         text = re.sub(r'\brp\d+([.,]\d+)*\b', 'rupiah', text)
         text = re.sub(r'\bidr\d+([.,]\d+)*\b', 'rupiah', text)
-        # Normalisasi kata-kata tertentu
         text = self.normalize_custom_words(text)
-        # Hanya menyisakan huruf, angka, dan tanda hubung (-)
         text = re.sub(r"&[a-z]+;", " ", text)
-        # Hapus angka kecuali dalam format "ke-24"
         text = re.sub(r"\b(?!ke-\d+)\d+\b", "", text)
         text = re.sub(r"[^\w\s]", " ", text)
         text = re.sub(r"\b(\w+)([- ]\1)+\b", r"\1", text)
 
-        text_cleaned = text
-
-        if text_cleaned.strip() == '' or len(text_cleaned.strip()) < 2:
-            return
-
-        # Tokenisasi
-        # tokens = [t for t in nltk.word_tokenize(
-        #     text) if len(t) > 1]
-        # Menghapus Stopwords lagi
-        tokens = [t for t in nltk.word_tokenize(
-            text) if len(t) > 1]
-        text = " ".join(tokens)
-
-        if text == '':
-            text = text_cleaned
-
-        # Lindungi kata-kata khusus agar tidak dilemmatize
-        text, protected_map = self.auto_protect_keywords(text)
-
-        # lemmatization
-        text = self.lemmatize_text(text)
-
-        # Kembalikan kata-kata yang dilindungi
-        text = self.restore_keywords(text, protected_map)
-
-        # Stemming
-        # text = self.stemmer.stem(text)
-        text = self.stemmerMP.stem_kalimat(text)
-
-        tokens = [t for t in nltk.word_tokenize(
-            text) if len(t) > 1]
-        text = " ".join(tokens)
-
-        # Kembalikan teks yang telah diproses
-        print(f"Text Setelah: {text}")
-
-        if text == '':
+        text_cleaned = text.strip()
+        if len(text_cleaned) < 2:
             return text_cleaned
 
-        return text
+        tokens = [t for t in nltk.word_tokenize(
+            text_cleaned) if t not in self.stop_words and len(t) > 1]
+        text = " ".join(tokens) or text_cleaned
 
+        text, protected_map = self.auto_protect_keywords(text)
+        text = self.lemmatize_text(text)
+        text = self.restore_keywords(text, protected_map)
+
+        text = self.stemmerMP.stem_kalimat(text)
+        tokens = [t for t in nltk.word_tokenize(text) if len(t) > 1]
+        text = " ".join(tokens)
+
+        print(f"Text Setelah: {text}")
+        return text or text_cleaned
+
+
+# ========== TEST RUNNER (Opsional, untuk uji coba) ==========
 
 if __name__ == "__main__":
     preprocessor = TextPreprocessor()
@@ -174,7 +157,7 @@ if __name__ == "__main__":
         "aa!!!!!",
         "aaa!!!!!"
     ]
-    # hitung watu pemrosesan
+
     start_time = time.time()
 
     for i, text in enumerate(samples, 1):

@@ -6,6 +6,10 @@ from src.utilities.map_classification_result import map_classification_result
 
 
 class TweetClassifier:
+    text_preprocessor = TextPreprocessor()
+    valid_categories = {
+        "Negatif", "Netral", "Positif"}  # Kategori yang valid
+
     def __init__(self, knn_model_path='./src/storage/models/base/knn_model.joblib'):
         """Inisialisasi model knn dan text preprocessor"""
         try:
@@ -13,10 +17,6 @@ class TweetClassifier:
         except Exception as e:
             print(f"❌ Gagal memuat knn model: {e}")
             self.knn_model = None  # Hindari crash jika model tidak bisa dimuat
-
-        self.text_preprocessor = TextPreprocessor()
-        self.valid_categories = {
-            "Negatif", "Netral", "Positif"}  # Kategori yang valid
 
     def classify(self, sample_text):
         """ Mengklasifikasikan teks berita menggunakan model hybrid dan DeepSeek """

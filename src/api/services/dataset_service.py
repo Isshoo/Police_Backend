@@ -10,9 +10,9 @@ from src.preprocessing.extends.dataset_preprocessor import DatasetPreprocessor
 class DatasetService:
     DATASET_DIR = "src/storage/datasets/uploads"
     METADATA_FILE = "src/storage/metadatas/uploaded_datasets.json"
+    preprocessor = DatasetPreprocessor()
 
     def __init__(self):
-        self.preprocessor = DatasetPreprocessor()
         os.makedirs(self.DATASET_DIR, exist_ok=True)
         if not os.path.exists(self.METADATA_FILE):
             with open(self.METADATA_FILE, "w") as f:

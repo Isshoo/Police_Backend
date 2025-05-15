@@ -6,10 +6,12 @@ from src.api.services.process_service import ProcessService
 
 
 class PreprocessController:
+    preprocess_service = PreprocessService()
+    dataset_service = DatasetService()
+    process_service = ProcessService()
+
     def __init__(self):
-        self.preprocess_service = PreprocessService()
-        self.dataset_service = DatasetService()
-        self.process_service = ProcessService()
+        pass
 
     def preprocess_dataset(self, raw_dataset_id):
         """ Preprocessing dataset yang sudah diunggah """
