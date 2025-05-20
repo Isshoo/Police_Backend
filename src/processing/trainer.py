@@ -177,7 +177,7 @@ class KNNModelTrainer:
 
 
 if __name__ == "__main__":
-    dataset_path = "./src/storage/datasets/preprocessed/datasetml2_original_preprocessed.csv"
+    dataset_path = "./src/storage/datasets/preprocessed/raw_dataset_original_preprocessed.csv"
     trainer = KNNModelTrainer(dataset_path)
 
     # # Training model secara manual

@@ -1,0 +1,14 @@
+[
+    {
+        "id": "33296938-4104-4abe-92f6-10161e7eb239",
+        "name": "raw_dataset",
+        "path": "src/storage/datasets/uploads/raw_dataset.csv",
+        "total_data": 2000,
+        "label_counts": {
+            "negatif": 810,
+            "positif": 635,
+            "netral": 555
+        },
+        "upload_at": "2025-05-20T23:17:51.278533"
+    }
+]

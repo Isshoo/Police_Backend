@@ -1,0 +1,15 @@
+[
+    {
+        "id": "1cd620e8-3401-455f-ace9-1a8f4feeb9c7",
+        "name": "v1",
+        "model_path": "src/storage/models/trained/1cd620e8-3401-455f-ace9-1a8f4feeb9c7.joblib",
+        "preprocessed_dataset_id": "33296938-4104-4abe-92f6-10161e7eb239",
+        "raw_dataset_id": "33296938-4104-4abe-92f6-10161e7eb239",
+        "total_data": 1996,
+        "n_neighbors": 9,
+        "split_size": 0.25,
+        "accuracy": 0.8537074148296593,
+        "created_at": "2025-05-20T23:19:52.773406",
+        "updated_at": "2025-05-20T23:19:52.774196"
+    }
+]

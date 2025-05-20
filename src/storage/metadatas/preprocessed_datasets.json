@@ -1,0 +1,16 @@
+[
+    {
+        "id": "33296938-4104-4abe-92f6-10161e7eb239",
+        "raw_dataset_id": "33296938-4104-4abe-92f6-10161e7eb239",
+        "path": "src/storage/datasets/preprocessed/raw_dataset_original_preprocessed.csv",
+        "name": "default",
+        "total_data": 1996,
+        "label_counts": {
+            "negatif": 810,
+            "positif": 632,
+            "netral": 554
+        },
+        "created_at": "2025-05-20T23:18:04.456020",
+        "updated_at": "2025-05-20T23:18:04.456127"
+    }
+]
